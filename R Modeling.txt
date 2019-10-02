@@ -1,0 +1,93 @@
+M2 MED Modeling Gender in R
+
+library(boot)
+
+dataset <- read.csv("C:\\Users\\[User redacted]\\Desktop\\M2 MED Modeling Gender Dataset.csv")
+summary(dataset)
+
+dataset$M1_OPIOID_DS_JITTER <- dataset$M1_OPIOID_DS+.0001
+dataset$M2_OPIOID_DS_JITTER <- dataset$M2_OPIOID_DS+.0001
+
+dataset$M2_M1_DS_DELTA <- dataset$M2_OPIOID_DS_JITTER/dataset$M1_OPIOID_DS_JITTER/100-1
+summary(dataset$M2_M1_DS_DELTA)
+
+#[Prior models tested are redacted]
+
+#Test M2/M1-1 Opioid DS increase + M2 Opioid DS*M1-M2 Rx + M2 Opioid DS*M1-M2 Spend interaction + M2 Opioid DS*M1-M2 MED interaction
+m2_med_model <- lm(dataset$M3_12_TOTAL_MED ~ dataset$MALE_FLAG+dataset$M2_M1_DS_DELTA+dataset$M2_OPIOID_DS*dataset$M1_2_TOTAL_RX+dataset$M2_OPIOID_DS*dataset$M1_2_TOTAL_SPEND+dataset$M2_OPIOID_DS*dataset$M1_2_TOTAL_MED+dataset$M1_OPIOID_DS+dataset$M2_OPIOID_DS+dataset$M2_PHARMACIES_TD+dataset$AGE_AT_DOI+dataset$M1_2_TOTAL_RX+dataset$M1_2_TOTAL_SPEND+dataset$M1_2_TOTAL_MED+dataset$CLUSTER_1+dataset$CLUSTER_2+dataset$CLUSTER_3+dataset$CLUSTER_4+dataset$CLUSTER_5+dataset$CLUSTER_6+dataset$CLUSTER_7+dataset$CLUSTER_8+dataset$CLUSTER_9+dataset$CLUSTER_10+dataset$CLUSTER_11+dataset$CLUSTER_12+dataset$CLUSTER_13+dataset$CLUSTER_14+dataset$CLUSTER_15)
+summary(m2_med_model)
+#Adjusted R-squared: .3103
+
+#
+Coefficients:
+                                                Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                                     [coefficient redacted]
+dataset$MALE_FLAG                               [coefficient redacted]
+dataset$M2_M1_DS_DELTA                          [coefficient redacted]
+dataset$M2_OPIOID_DS                            [coefficient redacted]
+dataset$M1_2_TOTAL_RX                           [coefficient redacted]
+dataset$M1_2_TOTAL_SPEND                        [coefficient redacted]
+dataset$M1_2_TOTAL_MED                          [coefficient redacted]   
+dataset$M1_OPIOID_DS                            [coefficient redacted]
+dataset$M2_PHARMACIES_TD                        [coefficient redacted]
+dataset$AGE_AT_DOI                              [coefficient redacted]
+dataset$CLUSTER_1                               [coefficient redacted]
+dataset$CLUSTER_2                               [coefficient redacted]
+dataset$CLUSTER_3                               [coefficient redacted]
+dataset$CLUSTER_4                               [coefficient redacted]
+dataset$CLUSTER_5                               [coefficient redacted]
+dataset$CLUSTER_6                               [coefficient redacted]
+dataset$CLUSTER_7                               [coefficient redacted]
+dataset$CLUSTER_8                               [coefficient redacted]
+dataset$CLUSTER_9                               [coefficient redacted]
+dataset$CLUSTER_10                              [coefficient redacted]
+dataset$CLUSTER_11                              [coefficient redacted]
+dataset$CLUSTER_12                              [coefficient redacted]
+dataset$CLUSTER_13                              [coefficient redacted]
+dataset$CLUSTER_14                              [coefficient redacted]
+dataset$CLUSTER_15                              [coefficient redacted]
+dataset$M2_OPIOID_DS:dataset$M1_2_TOTAL_RX      [coefficient redacted]
+dataset$M2_OPIOID_DS:dataset$M1_2_TOTAL_SPEND   [coefficient redacted]
+dataset$M2_OPIOID_DS:dataset$M1_2_TOTAL_MED     [coefficient redacted]
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 4014 on 75062 degrees of freedom
+Multiple R-squared:  0.3105,    Adjusted R-squared:  0.3103 
+F-statistic:  1252 on 27 and 75062 DF,  p-value: < 2.2e-16
+
+
+Apply M2 Model to data in SAS
+
+CASE
+WHEN t1.CL_INJURY_DATE between "&DATE_RANGE_M1_1"d and "&DATE_RANGE_M1_2"d
+THEN [M1 Model redacted]
+ELSE -268.2
++([coefficient redacted]*t1.MALE_FLAG)
++([coefficient redacted]*t1.M2_M1_DS_DELTA)
++([coefficient redacted]*t1.M2_OPIOID_DS)
++([coefficient redacted]*t1.M1_2_TOTAL_RX)
++([coefficient redacted]*t1.M1_2_TOTAL_SPEND)
++([coefficient redacted]*t1.M1_2_TOTAL_MED)
++([coefficient redacted]*t1.M1_OPIOID_DS)
++([coefficient redacted]*t1.M2_PHARMACIES_TD)
++([coefficient redacted]*t1.AGE_AT_DOI)
++([coefficient redacted]*t1.CLUSTER_1)
++([coefficient redacted]*t1.CLUSTER_2)
++([coefficient redacted]*t1.CLUSTER_3)
++([coefficient redacted]*t1.CLUSTER_4)
++([coefficient redacted]*t1.CLUSTER_5)
++([coefficient redacted]*t1.CLUSTER_6)
++([coefficient redacted]*t1.CLUSTER_7)
++([coefficient redacted]*t1.CLUSTER_8)
++([coefficient redacted]*t1.CLUSTER_9)
++([coefficient redacted]*t1.CLUSTER_10)
++([coefficient redacted]*t1.CLUSTER_11)
++([coefficient redacted]*t1.CLUSTER_12)
++([coefficient redacted]*t1.CLUSTER_13)
++([coefficient redacted]*t1.CLUSTER_14)
++([coefficient redacted]*t1.CLUSTER_15)
++([coefficient redacted]*t1.M2_OPIOID_DS*t1.M1_2_TOTAL_RX)
++([coefficient redacted]*t1.M2_OPIOID_DS*t1.M1_2_TOTAL_SPEND)
++([coefficient redacted]*t1.M2_OPIOID_DS*t1.M1_2_TOTAL_MED)
+END
